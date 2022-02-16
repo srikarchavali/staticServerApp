@@ -55,13 +55,51 @@ exports.deleteOne = async (req, res) => {
     try {
         if(req.body.title){
         const result = await Movie.deleteOne({title: req.body.title});
-        res.send({message: `Movie deleted successfully!`});
+        res.status(200).send({message: `Movie deleted successfully!`});
         }else if(req.body.actor){
         const result = await Movie.deleteOne({actor: req.body.actor}); 
-        res.send({message: `Movie ${res.body.title} deleted successfully!`});
+        res.status(200).send({message: `Movie deleted successfully!`});
         }
     } catch (error) {
         console.log(error)
-        res.status(500).send({error: error.message})
+        res.status(500).send({error: error.message});
+    }
+}
+
+// Delete all movies
+exports.deleteMany = async (req, res) => {
+    try {
+        const result = await Movie.deleteMany({});
+        res.status(200).send({message: `${result.deletedCount} movies deleted successfully!`});
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({error: error.message});
+    }
+}
+
+//Update movie using title or actor
+exports.updateOne = async (req, res) => {
+    try {
+        if(req.body.title){
+        const result = await Movie.updateOne({title: req.body.title},{$set: {title: req.body.newtitle}});
+        res.status(200).send({message: `found ${result.matchedCount} item(s) modified ${result.modifiedCount} item(s)`});
+        }else if(req.body.actor){
+        const result = await Movie.updateOne({actor: req.body.actor},{$set: {actor: req.body.newactor}}); 
+        res.status(200).send({message: `found ${result.matchedCount} item(s) modified ${result.modifiedCount} item(s)`});
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({error: error.message});
+    }
+}
+
+//Update movie using ID
+exports.updateById = async (req, res) => {
+    try {
+        const result = await Movie.findByIdAndUpdate(req.params.id, req.body);
+        res.status(200).send({message: `Item with id ${req.params.id} modified`});
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({error: error.message});
     }
 }
